@@ -13,7 +13,7 @@ class Company
         private Email $email,
         private string $phone,
         private string $password,
-        
+
     ) {}
 
     protected $hidden = ['password'];
@@ -22,12 +22,12 @@ class Company
     {
         return $this->id;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
- 
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -76,5 +76,17 @@ class Company
     {
         $this->password = $password;
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'document' => $this->getDocument(),
+            'email' => (string) $this->getEmail(),
+            'phone' => $this->getPhone(),
+            // 'password' => $this->getPassword(), // oculto conforme $hidden
+        ];
     }
 }

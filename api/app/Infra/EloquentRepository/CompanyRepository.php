@@ -6,6 +6,7 @@ use App\Domain\Entity\Company;
 use App\Domain\Repository\CompanyRepositoryInterface;
 use App\Domain\ValueObject\Email;
 use App\Infra\EloquentModel\CompanyModel;
+use App\Infra\Mapper\CompanyMapper;
 
 class CompanyRepository implements CompanyRepositoryInterface
 {
@@ -15,14 +16,7 @@ class CompanyRepository implements CompanyRepositoryInterface
 
         if(!$model) return null;
 
-        return new Company(
-            $model->id,
-            $model->name,
-            $model->document,
-            new Email($model->email),
-            $model->phone,
-            $model->password,
-        );
+        return CompanyMapper::eloquentToCompany($model);
     }
 
     public function findByDocument(string $document): ?Company
@@ -31,13 +25,6 @@ class CompanyRepository implements CompanyRepositoryInterface
 
         if(!$model) return null;
 
-        return new Company(
-            $model->id,
-            $model->name,
-            $model->document,
-            new Email($model->email),
-            $model->phone,
-            $model->password,
-        );
+        return CompanyMapper::eloquentToCompany($model);
     }
 }

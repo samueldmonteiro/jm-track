@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CampaignController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -8,13 +9,22 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
 
     // auth
-    Route::controller(AuthController::class)->prefix('auth')->group(
+    Route::controller(AuthController::class)->prefix('auth')->name('auth.')->group(
         function () {
-            Route::post('admin', 'authAdmin');
-            Route::post('company', 'authCompany');
+            Route::post('admin', 'authAdmin')->name('admin');
+            Route::post('company', 'authCompany')->name('company');
         }
     );
 
+    //campaign
+    Route::controller(CampaignController::class)->prefix('campaign')->name('campaign.')->group(
+        function(){
+            Route::post('store', 'store')->name('store');
+        }
+    );
+
+
+    //tests
     Route::middleware('auth:admin')->get('/teste', function () {
         return response()->json(Auth::user());
     });
