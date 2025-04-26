@@ -6,8 +6,5 @@ class AuthCompanyOutputDTO
 {
     public function __construct(
         public string $token
-    )
-    {
-        
-    }
+    ) {}
 }

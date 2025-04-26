@@ -5,6 +5,7 @@ namespace App\Infra\Mapper;
 use App\Domain\Entity\Campaign;
 use App\Domain\Enum\CampaignStatus;
 use App\Infra\EloquentModel\CampaignModel;
+use Illuminate\Database\Eloquent\Collection;
 
 class CampaignMapper
 {
@@ -42,5 +43,14 @@ class CampaignMapper
         $model->start_date = $campaign->getStartDate();
         $model->end_date = $campaign->getEndDate();
         return $model;
+    }
+
+    public static function eloquentCollectionToCampaigns(Collection $models): array
+    {
+        $outputList = array_map(function (CampaignModel $model) {
+            return self::eloquentToCampaign($model);
+        }, $models->all());
+
+        return $outputList;
     }
 }

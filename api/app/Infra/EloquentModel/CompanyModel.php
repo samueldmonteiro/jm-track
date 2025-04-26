@@ -28,4 +28,9 @@ class CompanyModel extends Authenticatable implements JWTSubject
             'role' => 'company'
         ];
     }
+
+    public function campaigns()
+    {
+        return $this->hasMany(CampaignModel::class, 'company_id', 'id');
+    }
 }

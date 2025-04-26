@@ -13,7 +13,7 @@ class CampaignModel extends Model
 
     public function company()
     {
-        return $this->belongsTo(CompanyModel::class);
+        return $this->belongsTo(CompanyModel::class, 'company_id', 'id');
     }
 
     protected $casts = [

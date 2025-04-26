@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\TrafficSourceController;
+use App\Http\Middleware\DetectUserType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -17,12 +19,20 @@ Route::prefix('v1')->group(function () {
     );
 
     //campaign
-    Route::controller(CampaignController::class)->prefix('campaign')->name('campaign.')->group(
+    Route::middleware('auth:company')->controller(CampaignController::class)->prefix('campaigns')->name('campaign.')->group(
         function(){
             Route::post('store', 'store')->name('store');
+            Route::delete('delete/{id}', 'delete')->name('delete');
+            Route::get('company/{id}', 'findCampaignsbyCompany')->name('findByCompany');
+            Route::put('update/{id}', 'update')->name('update');
         }
     );
 
+    Route::middleware(DetectUserType::class)->controller(TrafficSourceController::class)->prefix('traffic_sources')->name('traffic_source.')->group(
+        function(){
+            Route::get('/', 'getAll')->name('all');
+        }
+    );
 
     //tests
     Route::middleware('auth:admin')->get('/teste', function () {

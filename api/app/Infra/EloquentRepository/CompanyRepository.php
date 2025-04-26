@@ -4,27 +4,32 @@ namespace App\Infra\EloquentRepository;
 
 use App\Domain\Entity\Company;
 use App\Domain\Repository\CompanyRepositoryInterface;
-use App\Domain\ValueObject\Email;
+use App\Infra\EloquentModel\CampaignModel;
 use App\Infra\EloquentModel\CompanyModel;
 use App\Infra\Mapper\CompanyMapper;
 
 class CompanyRepository implements CompanyRepositoryInterface
 {
-    public function findById(int $id): ?Company
+    public function findById(int $id, array $with = []): ?Company
     {
-        $model =  CompanyModel::find($id);
+        $model =  CompanyModel::with($with)->find($id);
 
-        if(!$model) return null;
+        if (!$model) return null;
 
-        return CompanyMapper::eloquentToCompany($model);
+        return CompanyMapper::eloquentToCompany($model, $with);
     }
 
-    public function findByDocument(string $document): ?Company
+    public function findByDocument(string $document, array $with = []): ?Company
     {
-        $model =  CompanyModel::where('document', $document)->first();
+        $model =  CompanyModel::with($with)->where('document', $document)->first();
 
-        if(!$model) return null;
+        if (!$model) return null;
 
-        return CompanyMapper::eloquentToCompany($model);
+        return CompanyMapper::eloquentToCompany($model, $with);
+    }
+
+    public function campaignBelongsToCompany(int $campaignId, int $companyId): bool
+    {
+        return CampaignModel::find($campaignId)->company_id == CompanyModel::find($companyId)->id;
     }
 }

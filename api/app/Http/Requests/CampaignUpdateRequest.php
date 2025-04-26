@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CampaignStoreRequest extends FormRequest
+class CampaignUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,7 +15,6 @@ class CampaignStoreRequest extends FormRequest
     {
         return [
             'name' =>  'required|string',
-            'startDate' =>  'required|date',
         ];
     }
 }

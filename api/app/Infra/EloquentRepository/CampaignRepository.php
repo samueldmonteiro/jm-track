@@ -3,28 +3,50 @@
 namespace App\Infra\EloquentRepository;
 
 use App\Domain\Entity\Campaign;
+use App\Domain\Entity\Company;
 use App\Domain\Repository\CampaignRepositoryInterface;
 use App\Infra\EloquentModel\CampaignModel;
 use App\Infra\Mapper\CampaignMapper;
-use App\Infra\Mapper\CompanyMapper;
-use DateTimeImmutable;
 
 class CampaignRepository implements CampaignRepositoryInterface
 {
-    public function findById(int $id): ?Campaign
+    public function findById(int $id, array $with = ['company']): ?Campaign
     {
-        $model =  CampaignModel::find($id);
+        $model = CampaignModel::with($with)->find($id);
 
         if (!$model) return null;
 
         return CampaignMapper::eloquentToCampaign($model);
     }
 
-    public function store(Campaign $campaign): Campaign {
-
+    public function store(Campaign $campaign): Campaign
+    {
         $model = CampaignMapper::campaignToEloquent($campaign);
-
         $model->save();
+
+        return CampaignMapper::eloquentToCampaign($model);
+    }
+
+    public function delete(int $id): bool
+    {
+        return CampaignModel::destroy($id) ? true : false;
+    }
+
+    public function findByCompany(Company $company, array $with = ['company']): array
+    {
+        $models = CampaignModel::with($with)
+            ->where('company_id', $company->getId())->get();
+
+        return CampaignMapper::eloquentCollectionToCampaigns($models);
+    }
+
+    public function update(Campaign $campaign): Campaign
+    {
+        $model = CampaignModel::with(['company'])->find($campaign->getId());
+
+        $model->update([
+            'name' => $campaign->getName()
+        ]);
 
         return CampaignMapper::eloquentToCampaign($model);
     }

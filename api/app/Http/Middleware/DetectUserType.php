@@ -16,8 +16,8 @@ class DetectUserType
 
             if ($payload->get('role') === 'admin') {
                 auth()->shouldUse('admin');
-            } elseif ($payload->get('role') === 'student') {
-                auth()->shouldUse('student');
+            } elseif ($payload->get('role') === 'company') {
+                auth()->shouldUse('company');
             } else {
                 return response()->json(['error' => 'Tipo de usuário inválido'], 403);
             }

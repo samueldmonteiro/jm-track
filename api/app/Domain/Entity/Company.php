@@ -14,6 +14,8 @@ class Company
         private string $phone,
         private string $password,
 
+        /** @var Campaign[] */
+        private array $campaigns = []
     ) {}
 
     protected $hidden = ['password'];
@@ -78,6 +80,26 @@ class Company
         return $this;
     }
 
+
+
+    public function addCampaign(Campaign $campaign): static
+    {
+        if (!in_array($campaign, $this->campaigns, true)) {
+            $this->campaigns[] = $campaign;
+            $campaign->setCompany($this);
+        }
+        return $this;
+    }
+
+    public function removeCampaign(Campaign $campaign): static
+    {
+        $key = array_search($campaign, $this->campaigns, true);
+        if ($key !== false) {
+            unset($this->campaigns[$key]);
+        }
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -87,6 +109,10 @@ class Company
             'email' => (string) $this->getEmail(),
             'phone' => $this->getPhone(),
             // 'password' => $this->getPassword(), // oculto conforme $hidden
+            'campaigns' => array_map(
+                fn(Campaign $campaign) => $campaign->toArray(),
+                $this->campaigns
+            ),
         ];
     }
 }
