@@ -2,7 +2,6 @@
 
 namespace App\Application\UseCase\TrafficSource\GetAll;
 
-use App\Application\DTO\TrafficSourceDTO;
 use App\Domain\Repository\TrafficSourceRepositoryInterface;
 
 class TrafficSourceGetAllUseCase
@@ -11,15 +10,9 @@ class TrafficSourceGetAllUseCase
         private TrafficSourceRepositoryInterface $trafficSourceRepository
     ) {}
 
-    /** @return TrafficSourceDTO[] */
+    /** @return TrafficSource[] */
     public function execute(int $limit = 10): array
     {
-        return array_map(function ($ts) {
-            return new TrafficSourceDTO(
-                $ts->getId(),
-                $ts->getName(),
-                $ts->getImage()
-            );
-        }, $this->trafficSourceRepository->getAll($limit));
+        return $this->trafficSourceRepository->getAll($limit);
     }
 }

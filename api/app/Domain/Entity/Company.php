@@ -15,7 +15,10 @@ class Company
         private string $password,
 
         /** @var Campaign[] */
-        private array $campaigns = []
+        private array $campaigns = [],
+
+        /** @var TrafficExpense[] */
+        private array $trafficExpenses = []
     ) {}
 
     protected $hidden = ['password'];
@@ -80,8 +83,6 @@ class Company
         return $this;
     }
 
-
-
     public function addCampaign(Campaign $campaign): static
     {
         if (!in_array($campaign, $this->campaigns, true)) {
@@ -100,19 +101,41 @@ class Company
         return $this;
     }
 
+    public function addtrafficExpense(TrafficExpense $trafficExpense): static
+    {
+        if (!in_array($trafficExpense, $this->trafficExpenses, true)) {
+            $this->trafficExpenses[] = $trafficExpense;
+            $trafficExpense->setCompany($this);
+        }
+        return $this;
+    }
+
+    public function removetrafficExpense(TrafficExpense $trafficExpense): static
+    {
+        $key = array_search($trafficExpense, $this->trafficExpenses, true);
+        if ($key !== false) {
+            unset($this->trafficExpenses[$key]);
+        }
+        return $this;
+    }
+
     public function toArray(): array
     {
-        return [
+        $data = [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'document' => $this->getDocument(),
             'email' => (string) $this->getEmail(),
             'phone' => $this->getPhone(),
-            // 'password' => $this->getPassword(), // oculto conforme $hidden
-            'campaigns' => array_map(
-                fn(Campaign $campaign) => $campaign->toArray(),
-                $this->campaigns
-            ),
+            'campaigns' => $this->campaigns ? array_map(function ($c) {
+                return $c->toArray();
+            }, $this->campaigns) : null,
+
+            'trafficExpenses' => $this->trafficExpenses ? array_map(function ($c) {
+                return $c->toArray();
+            }, $this->trafficExpenses) : null,
         ];
+        
+        return $data;
     }
 }

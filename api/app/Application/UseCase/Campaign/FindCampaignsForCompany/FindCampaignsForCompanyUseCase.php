@@ -3,6 +3,7 @@
 namespace App\Application\UseCase\Campaign\FindCampaignsForCompany;
 
 use App\Application\DTO\CampaignDTO;
+use App\Application\DTO\CampaignWithoutRelationsDTO;
 use App\Domain\Exception\CompanyNotFoundException;
 use App\Domain\Repository\CampaignRepositoryInterface;
 use App\Domain\Repository\CompanyRepositoryInterface;
@@ -25,10 +26,10 @@ class FindCampaignsForCompanyUseCase
             throw new CompanyNotFoundException();
         }
 
-        $campaigns = $this->campaignRepository->findByCompany($company);
-
+        $campaigns = $this->campaignRepository->findByCompany($company, ['company']);
+        
         return array_map(function ($campaign) {
-            return new CampaignDTO(
+            return new CampaignWithoutRelationsDTO(
                 $campaign->getId(),
                 $campaign->getName(),
                 $campaign->getStatus(),
@@ -36,6 +37,5 @@ class FindCampaignsForCompanyUseCase
                 $campaign->getEndDate(),
             );
         }, $campaigns);
-
     }
 }

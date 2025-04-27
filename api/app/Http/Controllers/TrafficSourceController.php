@@ -13,7 +13,11 @@ class TrafficSourceController extends Controller
     {
         try {
             $response = $getAll->execute($request->limit ?? 10);
-            return $this->jsonSuccess($response);
+            return $this->jsonSuccess(
+                array_map(function($ts){
+                    return $ts->toArray();
+                }, $response)
+            );
 
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);

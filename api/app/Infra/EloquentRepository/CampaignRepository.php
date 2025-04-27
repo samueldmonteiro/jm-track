@@ -32,17 +32,17 @@ class CampaignRepository implements CampaignRepositoryInterface
         return CampaignModel::destroy($id) ? true : false;
     }
 
-    public function findByCompany(Company $company, array $with = ['company']): array
+    public function findByCompany(Company $company, array $with = []): array
     {
         $models = CampaignModel::with($with)
             ->where('company_id', $company->getId())->get();
 
-        return CampaignMapper::eloquentCollectionToCampaigns($models);
+        return CampaignMapper::eloquentCollectionToCampaigns($models, $with);
     }
 
     public function update(Campaign $campaign): Campaign
     {
-        $model = CampaignModel::with(['company'])->find($campaign->getId());
+        $model = CampaignModel::find($campaign->getId());
 
         $model->update([
             'name' => $campaign->getName()

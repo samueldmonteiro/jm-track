@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\TrafficExpenseController;
 use App\Http\Controllers\TrafficSourceController;
 use App\Http\Middleware\DetectUserType;
 use Illuminate\Support\Facades\Auth;
@@ -28,13 +29,21 @@ Route::prefix('v1')->group(function () {
         }
     );
 
+    // traffic source
     Route::middleware(DetectUserType::class)->controller(TrafficSourceController::class)->prefix('traffic_sources')->name('traffic_source.')->group(
         function(){
             Route::get('/', 'getAll')->name('all');
         }
     );
 
-    //tests
+    // traffic expense
+    Route::middleware(DetectUserType::class)->controller(TrafficExpenseController::class)->prefix('traffic_expenses')->name('traffic_expense.')->group(
+        function(){
+            Route::get('/', 'byCompany')->name('byCompany');
+        }
+    );
+
+    // tests
     Route::middleware('auth:admin')->get('/teste', function () {
         return response()->json(Auth::user());
     });

@@ -31,7 +31,7 @@ class CampaignController extends Controller
         try {
             $response = $store->execute($dto);
 
-            return $this->jsonSuccess($response->toArray());
+            return $this->jsonSuccess($response);
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }

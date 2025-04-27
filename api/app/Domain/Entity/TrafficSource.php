@@ -36,4 +36,13 @@ class TrafficSource
         $this->image = $image;
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'image' => $this->getImage()
+        ];
+    }
 }

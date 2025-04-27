@@ -4,12 +4,13 @@ namespace App\Domain\Entity;
 
 use App\Domain\Enum\CampaignStatus;
 use DateTimeImmutable;
+use DomainException;
 
 class Campaign
 {
     public function __construct(
         private ?int $id,
-        private Company $company,
+        private ?Company $company,
         private string $name,
         private CampaignStatus $status,
         private DateTimeImmutable $startDate,
@@ -23,6 +24,9 @@ class Campaign
 
     public function getCompany(): Company
     {
+        if (!$this->company) {
+            throw new DomainException('Company is not loaded.');
+        }
         return $this->company;
     }
 
@@ -78,13 +82,15 @@ class Campaign
 
     public function toArray(): array
     {
-        return [
+        $data = [
             'id' => $this->getId(),
-            'company' => $this->getCompany()->toArray(),
             'name' => $this->getName(),
             'status' => $this->getStatus()->value,
             'start_date' => $this->getStartDate()->format('Y-m-d H:i:s'),
             'end_date' => $this->getEndDate()?->format('Y-m-d H:i:s'),
+            'company' => $this->company ? $this->company->toArray() : null
         ];
+
+        return $data;
     }
 }

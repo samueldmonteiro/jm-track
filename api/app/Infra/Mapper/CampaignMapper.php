@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CampaignMapper
 {
-    public static function eloquentToCampaign(CampaignModel $model): Campaign
+    public static function eloquentToCampaign(CampaignModel $model, array $relations = []): Campaign
     {
         $status = match ($model->status) {
             'open' => CampaignStatus::OPEN,
@@ -19,7 +19,7 @@ class CampaignMapper
 
         return new Campaign(
             $model->id,
-            CompanyMapper::eloquentToCompany($model->company),
+            in_array('company', $relations)  ? CompanyMapper::eloquentToCompany($model->company) : null,
             $model->name,
             $status,
             $model->start_date,
@@ -45,10 +45,10 @@ class CampaignMapper
         return $model;
     }
 
-    public static function eloquentCollectionToCampaigns(Collection $models): array
+    public static function eloquentCollectionToCampaigns(Collection $models, array $relations = []): array
     {
-        $outputList = array_map(function (CampaignModel $model) {
-            return self::eloquentToCampaign($model);
+        $outputList = array_map(function (CampaignModel $model) use ($relations) {
+            return self::eloquentToCampaign($model, $relations);
         }, $models->all());
 
         return $outputList;
