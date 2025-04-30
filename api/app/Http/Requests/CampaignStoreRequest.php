@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class CampaignStoreRequest extends FormRequest
+class CampaignStoreRequest extends ApiRequest
 {
     public function authorize(): bool
     {

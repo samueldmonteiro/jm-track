@@ -6,21 +6,31 @@ use App\Domain\ValueObject\Amount;
 use DateTimeImmutable;
 use DomainException;
 
-class TrafficExpense
+class TrafficReturn
 {
     public function __construct(
         private ?int $id,
-        private ?Company $company,
-        private ?TrafficSource $trafficSource,
-        private ?Campaign $campaign,
         private DateTimeImmutable $date,
-        private Amount $amount
+        private Amount $amount,
+        private ?Company $company,
+        private ?Campaign $campaign,
+        private ?TrafficSource $trafficSource
     ) {}
 
     public function getId(): ?int
     {
         return $this->id;
-    }        
+    }
+
+    public function getDate(): DateTimeImmutable
+    {
+        return $this->date;
+    }
+
+    public function getAmount(): Amount
+    {
+        return $this->amount;
+    }
 
     public function getCompany(): Company
     {
@@ -33,20 +43,6 @@ class TrafficExpense
     public function setCompany(Company $company): self
     {
         $this->company = $company;
-        return $this;
-    }
-
-    public function getTrafficSource(): TrafficSource
-    {
-        if (!$this->trafficSource) {
-            throw new DomainException('Traffic Source is not loaded.');
-        }
-        return $this->trafficSource;
-    }
-
-    public function setTrafficSource(TrafficSource $trafficSource): self
-    {
-        $this->trafficSource = $trafficSource;
         return $this;
     }
 
@@ -64,25 +60,17 @@ class TrafficExpense
         return $this;
     }
 
-    public function getDate(): DateTimeImmutable
+    public function getTrafficSource(): TrafficSource
     {
-        return $this->date;
+        if (!$this->trafficSource) {
+            throw new DomainException('TrafficSource is not loaded.');
+        }
+        return $this->trafficSource;
     }
 
-    public function setDate(DateTimeImmutable $date): self
+    public function setTrafficSource(TrafficSource $trafficSource): self
     {
-        $this->date = $date;
-        return $this;
-    }
-
-    public function getAmount(): Amount
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(Amount $amount): self
-    {
-        $this->amount = $amount;
+        $this->trafficSource = $trafficSource;
         return $this;
     }
 
@@ -105,7 +93,7 @@ class TrafficExpense
         if ($this->trafficSource) {
             $data['trafficSource'] =  $this->trafficSource->toArray();
         }
-        
+
         return $data;
     }
 }

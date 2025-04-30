@@ -2,7 +2,6 @@
 
 namespace App\Application\UseCase\Campaign\Store;
 
-use App\Application\DTO\CampaignWithoutRelationsDTO;
 use App\Domain\Entity\Campaign;
 use App\Domain\Enum\CampaignStatus;
 use App\Domain\Exception\CompanyNotFoundException;
@@ -16,7 +15,7 @@ class CampaignStoreUseCase
         private CompanyRepositoryInterface $companyRepository
     ) {}
 
-    public function execute(CampaignStoreInputDTO $dto): CampaignWithoutRelationsDTO
+    public function execute(CampaignStoreInputDTO $dto): Campaign
     {
         $company = $this->companyRepository->findById($dto->companyId);
 
@@ -32,14 +31,6 @@ class CampaignStoreUseCase
             $dto->startDate,
         );
 
-        $newCampaign = $this->campaignRepository->store($newCampaign);
-        
-        return new CampaignWithoutRelationsDTO(
-            $newCampaign->getId(),
-            $newCampaign->getName(),
-            $newCampaign->getStatus(),
-            $newCampaign->getStartDate(),
-            $newCampaign->getEndDate(),
-        );
+        return $this->campaignRepository->store($newCampaign);
     }
 }

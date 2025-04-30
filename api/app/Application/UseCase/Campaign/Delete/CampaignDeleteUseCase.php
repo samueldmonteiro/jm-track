@@ -37,5 +37,5 @@ class CampaignDeleteUseCase
         }
 
         return $this->campaignRepository->delete($campaign->getId());
-    }
+    } 
 }

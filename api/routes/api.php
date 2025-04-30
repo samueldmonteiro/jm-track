@@ -40,6 +40,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(DetectUserType::class)->controller(TrafficExpenseController::class)->prefix('traffic_expenses')->name('traffic_expense.')->group(
         function(){
             Route::get('/', 'byCompany')->name('byCompany');
+            Route::post('store', 'store')->name('store');
         }
     );
 

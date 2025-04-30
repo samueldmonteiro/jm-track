@@ -20,10 +20,19 @@ class TrafficExpenseRepository implements TrafficExpenseRepositoryInterface
     }
 
     /** @return TrafficExpense[] */
-    public function findByCompany(Company $company, array $with = []): array
+    public function findAllByCompany(Company $company, array $with = []): array
     {
         $models = TrafficExpenseModel::where('company_id', $company->getId())->get();
 
         return TrafficExpenseMapper::eloquentCollectionToEntities($models, $with);
+    }
+
+    public function store(TrafficExpense $trafficExpense): TrafficExpense
+    {
+        $model = TrafficExpenseMapper::entityToEloquent($trafficExpense);
+
+        $model->save();
+
+        return TrafficExpenseMapper::eloquentToEntity($model);
     }
 }

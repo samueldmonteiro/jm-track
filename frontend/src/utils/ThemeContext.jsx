@@ -1,11 +1,13 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+
+import { createTheme, ThemeProvider as MUIThemeProvider } from '@mui/material';
 
 const ThemeContext = createContext({
   currentTheme: 'light',
-  changeCurrentTheme: () => {},
+  changeCurrentTheme: () => { },
 });
 
-export default function ThemeProvider({children}) {  
+export default function ThemeProvider({ children }) {
   const persistedTheme = localStorage.getItem('theme');
   const [theme, setTheme] = useState(persistedTheme || 'light');
 
@@ -27,11 +29,37 @@ export default function ThemeProvider({children}) {
     const transitionTimeout = setTimeout(() => {
       document.documentElement.classList.remove('**:transition-none!');
     }, 1);
-    
+
     return () => clearTimeout(transitionTimeout);
   }, [theme]);
 
-  return <ThemeContext.Provider value={{ currentTheme: theme, changeCurrentTheme }}>{children}</ThemeContext.Provider>;
+  const themeMUI = useMemo(() =>
+    createTheme({
+      palette: {
+        mode: theme, // 'light' ou 'dark'
+        ...(theme === 'dark' && {
+          primary: { main: '#90caf9' },
+          secondary: { main: '#f48fb1' },
+          background: {
+            default: '#1f2937',
+            paper: '#1e1e1e',
+          },
+          text: {
+            primary: '#ffffff',
+            secondary: '#aaaaaa',
+          },
+        }),
+      },
+      typography: {
+        fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+      },
+    }), [theme]);
+
+  return <ThemeContext.Provider value={{ currentTheme: theme, changeCurrentTheme }}>
+    <MUIThemeProvider theme={themeMUI}>
+      {children}
+    </MUIThemeProvider>
+  </ThemeContext.Provider>;
 }
 
 export const useThemeProvider = () => useContext(ThemeContext);

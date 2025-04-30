@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CampaignController extends Controller
 {
-    public function store(CampaignStoreRequest $request, CampaignStoreUseCase $store): JsonResponse
-    {
+    public function store(
+        CampaignStoreRequest $request,
+        CampaignStoreUseCase $store
+    ): JsonResponse {
         $dto = new CampaignStoreInputDTO(
             Auth::user()->id,
             $request->validated('name'),
@@ -31,7 +33,7 @@ class CampaignController extends Controller
         try {
             $response = $store->execute($dto);
 
-            return $this->jsonSuccess($response);
+            return $this->jsonSuccess($response->toArray());
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
@@ -50,27 +52,36 @@ class CampaignController extends Controller
         }
     }
 
-    public function findCampaignsbyCompany(int $id, FindCampaignsForCompanyUseCase $useCase): JsonResponse
-    {
+    public function findCampaignsbyCompany(
+        int $id,
+        FindCampaignsForCompanyUseCase $useCase
+    ): JsonResponse {
         try {
             $response = $useCase->execute(
                 new FindCampaignsForCompanyInputDTO($id)
             );
 
-            return $this->jsonSuccess($response);
+            return $this->jsonSuccess(
+                array_map(function ($c) {
+                    return $c->toArray();
+                }, $response)
+            );
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), $e->getCode());
         }
     }
 
-    public function update(int $id, CampaignUpdateRequest $request, CampaignUpdateUseCase $update): JsonResponse
-    {
+    public function update(
+        int $id,
+        CampaignUpdateRequest $request,
+        CampaignUpdateUseCase $update
+    ): JsonResponse {
         try {
             $response = $update->execute(
                 new CampaignUpdateInputDTO(Auth::user()->id, $id, $request->validated('name'))
             );
 
-            return $this->jsonSuccess($response);
+            return $this->jsonSuccess($response->toArray());
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), $e->getCode());
         }

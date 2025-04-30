@@ -27,4 +27,15 @@ class TrafficExpenseMapper
             return self::eloquentToEntity($model, $relations);
         }, $models->all());
     }
+
+    public static function entityToEloquent(TrafficExpense $trafficExpense): TrafficExpenseModel
+    {
+        $model = new TrafficExpenseModel();
+        $model->company_id = $trafficExpense->getCompany()->getId();
+        $model->traffic_source_id = $trafficExpense->getTrafficSource()->getId();
+        $model->campaign_id = $trafficExpense->getCampaign()->getId();
+        $model->date = $trafficExpense->getDate();
+        $model->amount = $trafficExpense->getAmount()->getValue();
+        return $model;
+    }
 }

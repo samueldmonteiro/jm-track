@@ -88,8 +88,11 @@ class Campaign
             'status' => $this->getStatus()->value,
             'start_date' => $this->getStartDate()->format('Y-m-d H:i:s'),
             'end_date' => $this->getEndDate()?->format('Y-m-d H:i:s'),
-            'company' => $this->company ? $this->company->toArray() : null
         ];
+
+        if ($this->company) {
+            $data['company'] =  $this->company->toArray();
+        }
 
         return $data;
     }

@@ -127,15 +127,20 @@ class Company
             'document' => $this->getDocument(),
             'email' => (string) $this->getEmail(),
             'phone' => $this->getPhone(),
-            'campaigns' => $this->campaigns ? array_map(function ($c) {
-                return $c->toArray();
-            }, $this->campaigns) : null,
-
-            'trafficExpenses' => $this->trafficExpenses ? array_map(function ($c) {
-                return $c->toArray();
-            }, $this->trafficExpenses) : null,
         ];
-        
+
+        if ($this->campaigns) {
+            $data['campaigns'] = array_map(function ($c) {
+                return $c->toArray();
+            }, $this->campaigns);
+        }
+
+        if ($this->trafficExpenses) {
+            $data['trafficExpenses'] = array_map(function ($c) {
+                return $c->toArray();
+            }, $this->trafficExpenses);
+        }
+
         return $data;
     }
 }
