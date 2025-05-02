@@ -52,13 +52,11 @@ class CampaignController extends Controller
         }
     }
 
-    public function findCampaignsbyCompany(
-        int $id,
-        FindCampaignsForCompanyUseCase $useCase
-    ): JsonResponse {
+    public function findAllCampaignsbyCompany(FindCampaignsForCompanyUseCase $useCase): JsonResponse
+    {
         try {
             $response = $useCase->execute(
-                new FindCampaignsForCompanyInputDTO($id)
+                new FindCampaignsForCompanyInputDTO(Auth::user()->id)
             );
 
             return $this->jsonSuccess(

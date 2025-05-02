@@ -10,7 +10,10 @@ import "@radix-ui/themes/styles.css";
 // Import pages
 import Dashboard from './pages/Dashboard';
 import Test from './pages/Test';
-import ThemeProvider from './utils/ThemeContext';
+import ThemeProvider from './context/ThemeContext';
+import Home from './pages/Traffic/Home';
+import { AuthProvider } from './auth/AuthContext';
+import ProtectedRoute from './auth/ProtectedRoute';
 
 function App() {
 
@@ -24,13 +27,19 @@ function App() {
 
   return (
     <>
-      <ThemeProvider>
-        <Routes>
-          <Route exact path="/" element={<Dashboard />} />
-          <Route exact path="/teste" element={<Test />} />
-        </Routes>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <Routes>
+            <Route exact path="/" element={
+              <ProtectedRoute allowed={['company']}><Dashboard /></ProtectedRoute>} />
+            <Route exact path="/teste" element={<Test />} />
+            <Route exact path="/trafego" element={<Home />} />
 
+            <Route exact path="/login" element={<h1>LOGINN</h1>} />
+
+          </Routes>
+        </ThemeProvider>
+      </AuthProvider>
     </>
   );
 }

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TrafficExpenseController extends Controller
 {
-    public function byCompany(FindAllTrafficExpensesByCompanyUseCase $find): JsonResponse
+    public function getAllByCompany(FindAllTrafficExpensesByCompanyUseCase $find): JsonResponse
     {
         try {
             $response = $find->execute(

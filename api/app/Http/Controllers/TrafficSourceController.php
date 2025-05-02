@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class TrafficSourceController extends Controller
 {
-    public function getAll(Request $request, TrafficSourceGetAllUseCase $getAll): JsonResponse
+    public function getAllByCompany(Request $request, TrafficSourceGetAllUseCase $getAll): JsonResponse
     {
         try {
             $response = $getAll->execute($request->limit ?? 10);
