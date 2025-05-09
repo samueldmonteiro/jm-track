@@ -2,3 +2,13 @@ company:
     path: company
     controller: App\Controller\AuthController::authCompany
     methods: [POST]
+
+get:
+    path: get
+    controller: App\Controller\AuthController::user
+    methods: [POST]
+
+verify:
+    path: verify
+    controller: App\Controller\AuthController::verify
+    methods: [POST]

@@ -3,7 +3,6 @@ auth:
     prefix: api/v1/auth
     name_prefix: auth_
 
-
 company:
     resource: routes/api/company.yaml
     prefix: api/v1/company
