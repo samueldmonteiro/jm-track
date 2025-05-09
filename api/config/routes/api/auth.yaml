@@ -1,0 +1,4 @@
+company:
+    path: company
+    controller: App\Controller\AuthController::authCompany
+    methods: [POST]

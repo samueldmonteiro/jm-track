@@ -1,14 +1,94 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import DashboardCard01 from '../../partials/dashboard/DashboardCard01';
-import FilterButton from '../../components/DropdownFilter';
-import Datepicker from '../../components/Datepicker';
+import { getAllTrafficReturnsWithTotalAmount } from '../../services/company/trafficReturn';
+import { getAllTrafficExpenses } from '../../services/company/trafficExpense';
+import DashboardCard06 from '../../partials/dashboard/DashboardCard06';
+import DashboardCard04 from '../../partials/dashboard/DashboardCard04';
 
 const Home = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [trafficReturnData, setTrafficReturnData] = useState(null);
+  const [trafficExpenseData, setTrafficExpenseData] = useState(null);
+  const [profitData, setProfitData] = useState(null);
 
+  const [trafficExpenseOriginalData, setTrafficExpenseOriginalData] = useState(null);
+
+
+  const extractTrafficReturnData = (data) => {
+    const totalAmount = data.totalAmount;
+    const dates = data.trafficReturns.map(item => item.date);
+    const amounts = data.trafficReturns.map(item => item.amount);
+
+    return {
+      totalAmount,
+      dates,
+      amounts
+    };
+  }
+
+  const extractTrafficExpenseData = (data) => {
+    const totalAmount = data.totalAmount;
+    const dates = data.trafficExpenses.map(item => item.date);
+    const amounts = data.trafficExpenses.map(item => item.amount);
+
+    return {
+      totalAmount,
+      dates,
+      amounts
+    };
+  }
+  useEffect(() => {
+
+    getAllTrafficReturnsWithTotalAmount().then(resp => {
+      setTrafficReturnData(extractTrafficReturnData(resp.data.data));
+    });
+
+    getAllTrafficExpenses().then(resp => {
+      setTrafficExpenseData(extractTrafficExpenseData(resp.data.data));
+      setTrafficExpenseOriginalData(resp.data.data)
+    });
+
+
+
+  }, []);
+
+  useEffect(() => {
+    if (trafficReturnData && trafficExpenseData) {
+      setProfitData({
+        dates: [],
+        amounts: [],
+        totalAmount: trafficReturnData.totalAmount - trafficExpenseData.totalAmount
+      })
+    }
+  }, [trafficReturnData, trafficExpenseData])
+
+  const apiData = {
+    trafficExpenses: [
+      {
+        id: 1,
+        date: "01-12-2023",
+        amount: 1500,
+        trafficSource: { id: 1, name: "Google Ads", image: "google_ads.png" }
+      },
+      {
+        id: 2,
+        date: "05-12-2023",
+        amount: 2300.5,
+        trafficSource: { id: 2, name: "Facebook Ads", image: "facebook_ads.png" }
+      },
+      {
+        id: 3,
+        date: "01-11-2023",
+        amount: 1800.75,
+        trafficSource: { id: 1, name: "Google Ads", image: "google_ads.png" }
+      }
+    ],
+    totalAmount: "5601.25"
+  };
+  
   return (
     <div className="flex h-screen overflow-hidden">
 
@@ -29,22 +109,12 @@ const Home = () => {
 
               {/* Left: Title */}
               <div className="mb-4 sm:mb-0">
-                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Dashboard</h1>
+                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Visão Geral</h1>
               </div>
 
               {/* Right: Actions */}
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
-                {/* Filter button */}
-                <FilterButton align="right" />
-                {/* Datepicker built with React Day Picker */}
-                <Datepicker align="right" />
-                {/* Add view button */}
-                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white">
-                  <svg className="fill-current shrink-0 xs:hidden" width="16" height="16" viewBox="0 0 16 16">
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
-                  <span className="max-xs:sr-only">Add View</span>
-                </button>
+
               </div>
 
             </div>
@@ -53,9 +123,13 @@ const Home = () => {
             <div className="grid grid-cols-12 gap-6">
 
               {/* Line chart (Acme Plus) */}
-              <DashboardCard01 data={null}/>
-              {/* Line chart (Acme Advanced) */}
-             
+              <DashboardCard01 data={trafficReturnData} title='Retorno Total de Adesão' />
+
+              <DashboardCard01 data={trafficExpenseData} title='Gasto Total' win={false} />
+              <DashboardCard01 data={profitData} title='Lucro Líquido' />
+              <DashboardCard06 data={trafficExpenseOriginalData} title='Gastos por Tráfego Pago'/>
+
+              <DashboardCard04 data={trafficExpenseOriginalData} title='Gastos por Tráfego Pago'/>
             </div>
 
           </div>

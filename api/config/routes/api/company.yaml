@@ -1,0 +1,4 @@
+store:
+    path: store
+    controller: App\Controller\CompanyController::store
+    methods: [POST]

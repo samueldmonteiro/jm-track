@@ -1,24 +1,21 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useThemeProvider } from '../context/ThemeContext';
-
 import { chartColors } from './ChartjsConfig';
-import {
-  Chart, BarController, BarElement, LinearScale, TimeScale, Tooltip, Legend,
-} from 'chart.js';
-import 'chartjs-adapter-moment';
+import { Chart, BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend } from 'chart.js';
+import dayjs from 'dayjs';
 
 // Import utilities
 import { formatValue } from '../utils/Utils';
 
-Chart.register(BarController, BarElement, LinearScale, TimeScale, Tooltip, Legend);
+Chart.register(BarController, BarElement, LinearScale, CategoryScale, Tooltip, Legend);
 
 function BarChart01({
   data,
   width,
-  height
+  height,
+  period
 }) {
-
-  const [chart, setChart] = useState(null)
+  const [chart, setChart] = useState(null);
   const canvas = useRef(null);
   const legend = useRef(null);
   const { currentTheme } = useThemeProvider();
@@ -27,7 +24,16 @@ function BarChart01({
 
   useEffect(() => {
     const ctx = canvas.current;
-    // eslint-disable-next-line no-unused-vars
+    if (!ctx) return;
+
+    // Format currency for tooltip
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(value);
+    };
+
     const newChart = new Chart(ctx, {
       type: 'bar',
       data: data,
@@ -42,6 +48,7 @@ function BarChart01({
         },
         scales: {
           y: {
+            beginAtZero: true,
             border: {
               display: false,
             },
@@ -55,14 +62,6 @@ function BarChart01({
             },
           },
           x: {
-            type: 'time',
-            time: {
-              parser: 'MM-DD-YYYY',
-              unit: 'month',
-              displayFormats: {
-                month: 'MMM YY',
-              },
-            },
             border: {
               display: false,
             },
@@ -80,8 +79,14 @@ function BarChart01({
           },
           tooltip: {
             callbacks: {
-              title: () => false, // Disable tooltip title
-              label: (context) => formatValue(context.parsed.y),
+              title: (context) => {
+                const label = context[0].label;
+                if (period === 'semanal') {
+                  return `Semana: ${label}`;
+                }
+                return label;
+              },
+              label: (context) => formatCurrency(context.parsed.y),
             },
             bodyColor: darkMode ? tooltipBodyColor.dark : tooltipBodyColor.light,
             backgroundColor: darkMode ? tooltipBgColor.dark : tooltipBgColor.light,
@@ -101,18 +106,15 @@ function BarChart01({
       plugins: [
         {
           id: 'htmlLegend',
-          afterUpdate(c, args, options) {
+          afterUpdate(c) {
             const ul = legend.current;
             if (!ul) return;
-            // Remove old legend items
             while (ul.firstChild) {
               ul.firstChild.remove();
             }
-            // Reuse the built-in legendItems generator
             const items = c.options.plugins.legend.labels.generateLabels(c);
             items.forEach((item) => {
               const li = document.createElement('li');
-              // Button element
               const button = document.createElement('button');
               button.style.display = 'inline-flex';
               button.style.alignItems = 'center';
@@ -121,7 +123,6 @@ function BarChart01({
                 c.setDatasetVisibility(item.datasetIndex, !c.isDatasetVisible(item.datasetIndex));
                 c.update();
               };
-              // Color box
               const box = document.createElement('span');
               box.style.display = 'block';
               box.style.width = '12px';
@@ -131,7 +132,6 @@ function BarChart01({
               box.style.borderWidth = '3px';
               box.style.borderColor = item.fillStyle;
               box.style.pointerEvents = 'none';
-              // Label
               const labelContainer = document.createElement('span');
               labelContainer.style.display = 'flex';
               labelContainer.style.alignItems = 'center';
@@ -164,8 +164,7 @@ function BarChart01({
     });
     setChart(newChart);
     return () => newChart.destroy();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     if (!chart) return;
