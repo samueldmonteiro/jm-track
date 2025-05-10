@@ -4,9 +4,12 @@ namespace App\Entity;
 
 use App\Repository\CompanyRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
@@ -17,15 +20,18 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['company_read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(['company_read'])]
     private ?string $document = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups(['company_read'])]
     private array $roles = [];
 
     /**
@@ -36,20 +42,30 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['company_read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['company_read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['company_read'])]
     private ?string $phone = null;
 
     #[ORM\Column]
+    #[Groups(['company_read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['company_read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /**
+     * @var Collection<int, Campaign>
+     */
+    #[ORM\OneToMany(targetEntity: Campaign::class, mappedBy: 'company')]
+    private Collection $campaigns;
 
     public function __construct(
         string $name,
@@ -65,6 +81,7 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
         $this->setPassword($password);
         $this->setPhone($phone);
         $this->setCreatedAt($createdAt);
+        $this->campaigns = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,6 +213,36 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Campaign>
+     */
+    public function getCampaigns(): Collection
+    {
+        return $this->campaigns;
+    }
+
+    public function addCampaign(Campaign $campaign): static
+    {
+        if (!$this->campaigns->contains($campaign)) {
+            $this->campaigns->add($campaign);
+            $campaign->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCampaign(Campaign $campaign): static
+    {
+        if ($this->campaigns->removeElement($campaign)) {
+            // set the owning side to null (unless already changed)
+            if ($campaign->getCompany() === $this) {
+                $campaign->setCompany(null);
+            }
+        }
 
         return $this;
     }

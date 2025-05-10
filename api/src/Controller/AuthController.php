@@ -7,10 +7,9 @@ use App\Controller\Rules\RuleValidator;
 use App\UseCase\Auth\Company\AuthCompany;
 use App\UseCase\Auth\Company\AuthCompanyInput;
 use App\UseCase\Auth\GetUser\GetUser;
-use App\UseCase\Auth\GetUser\GetUserOutput;
-use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Exception;
 
 final class AuthController extends BaseController
 {
@@ -23,20 +22,18 @@ final class AuthController extends BaseController
     {
         $rules = new AuthAdminRules($request->toArray());
 
-        $errors = $validator->validate($rules);
-
-        if ($errors) {
-            return $this->json($errors);
-        }
-
-        try {
-            $response = $this->authCompany->execute(
+        return $this->handleRequest(
+            $validator,
+            $rules,
+            fn($rules) => $this->authCompany->execute(
                 new AuthCompanyInput($rules->document, $rules->password)
-            );
-            return $this->json($response);
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), $e->getCode());
-        }
+            ),
+            context: ['groups' => ['company_read']],
+            formatResponse: fn($result) => [
+                'company' => $result->company,
+                'token' => $result->token,
+            ]
+        );
     }
 
     public function user(): JsonResponse

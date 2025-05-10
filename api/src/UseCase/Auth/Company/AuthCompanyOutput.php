@@ -2,10 +2,12 @@
 
 namespace App\UseCase\Auth\Company;
 
+use App\Entity\Company;
+
 class AuthCompanyOutput
 {
     public function __construct(
-        public $token,
-        public $company
+        public string $token,
+        public Company $company
     ) {}
 }
