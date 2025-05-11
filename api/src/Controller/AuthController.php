@@ -29,10 +29,7 @@ final class AuthController extends BaseController
                 new AuthCompanyInput($rules->document, $rules->password)
             ),
             context: ['groups' => ['company_read']],
-            formatResponse: fn($result) => [
-                'company' => $result->company,
-                'token' => $result->token,
-            ]
+            formatResponse: fn($result) => $result->toArray()
         );
     }
 

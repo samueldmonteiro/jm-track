@@ -1,8 +1,11 @@
+# Companies
 store:
     path: store
     controller: App\Controller\CompanyController::store
     methods: [POST]
 
+
+# Campaigns
 campaign_create:
     path: campaign/create
     controller: App\Controller\CompanyCampaignController::createCampaign
@@ -26,5 +29,28 @@ campaign_by_id:
 campaigns:
     path: campaigns
     controller: App\Controller\CompanyCampaignController::allCampaigns
+    methods: [GET]
+
+
+# Traffic Returns
+
+traffic_return_create:
+    path: traffic_return/create
+    controller: App\Controller\CompanyTrafficReturnController::createTrafficReturn
+    methods: [POST]
+
+traffic_return_update:
+    path: traffic_return/update/{id}
+    controller: App\Controller\CompanyTrafficReturnController::updateTrafficReturn
+    methods: [PUT]
+
+traffic_return_delete:
+    path: traffic_return/delete/{id}
+    controller: App\Controller\CompanyTrafficReturnController::deleteTrafficReturn
+    methods: [DELETE]
+
+traffic_returns:
+    path: traffic_returns
+    controller: App\Controller\CompanyTrafficReturnController::allTrafficReturns
     methods: [GET]
 

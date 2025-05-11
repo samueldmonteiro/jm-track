@@ -20,18 +20,18 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?string $document = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private array $roles = [];
 
     /**
@@ -42,23 +42,23 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?string $phone = null;
 
     #[ORM\Column]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['company_read'])]
+    #[Groups(['company'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
@@ -66,6 +66,12 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Campaign::class, mappedBy: 'company')]
     private Collection $campaigns;
+
+    /**
+     * @var Collection<int, TrafficReturn>
+     */
+    #[ORM\OneToMany(targetEntity: TrafficReturn::class, mappedBy: 'company')]
+    private Collection $trafficReturns;
 
     public function __construct(
         string $name,
@@ -82,6 +88,7 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
         $this->setPhone($phone);
         $this->setCreatedAt($createdAt);
         $this->campaigns = new ArrayCollection();
+        $this->trafficReturns = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,6 +248,36 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($campaign->getCompany() === $this) {
                 $campaign->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TrafficReturn>
+     */
+    public function getTrafficReturns(): Collection
+    {
+        return $this->trafficReturns;
+    }
+
+    public function addTrafficReturn(TrafficReturn $trafficReturn): static
+    {
+        if (!$this->trafficReturns->contains($trafficReturn)) {
+            $this->trafficReturns->add($trafficReturn);
+            $trafficReturn->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrafficReturn(TrafficReturn $trafficReturn): static
+    {
+        if ($this->trafficReturns->removeElement($trafficReturn)) {
+            // set the owning side to null (unless already changed)
+            if ($trafficReturn->getCompany() === $this) {
+                $trafficReturn->setCompany(null);
             }
         }
 

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\Enum\CampaignStatus;
 use App\Repository\CampaignRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -15,27 +17,33 @@ class Campaign
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['campaign_read'])]
+    #[Groups(['campaign'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'campaigns')]
     private ?Company $company = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['campaign_read'])]
+    #[Groups(['campaign'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['campaign_read'])]
+    #[Groups(['campaign'])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['campaign_read'])]
+    #[Groups(['campaign'])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[ORM\Column(enumType: CampaignStatus::class)]
-    #[Groups(['campaign_read'])]
+    #[Groups(['campaign'])]
     private ?CampaignStatus $status = null;
+
+    /**
+     * @var Collection<int, TrafficReturn>
+     */
+    #[ORM\OneToMany(targetEntity: TrafficReturn::class, mappedBy: 'campaign')]
+    private Collection $trafficReturns;
 
     public function __construct(
         string $name,
@@ -47,6 +55,7 @@ class Campaign
         $this->setCompany($company);
         $this->setStatus($status);
         $this->setStartDate($startDate);
+        $this->trafficReturns = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,6 +119,36 @@ class Campaign
     public function setStatus(CampaignStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TrafficReturn>
+     */
+    public function getTrafficReturns(): Collection
+    {
+        return $this->trafficReturns;
+    }
+
+    public function addTrafficReturn(TrafficReturn $trafficReturn): static
+    {
+        if (!$this->trafficReturns->contains($trafficReturn)) {
+            $this->trafficReturns->add($trafficReturn);
+            $trafficReturn->setCampaign($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrafficReturn(TrafficReturn $trafficReturn): static
+    {
+        if ($this->trafficReturns->removeElement($trafficReturn)) {
+            // set the owning side to null (unless already changed)
+            if ($trafficReturn->getCampaign() === $this) {
+                $trafficReturn->setCampaign(null);
+            }
+        }
 
         return $this;
     }

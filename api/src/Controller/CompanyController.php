@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\Rules\CreateCompanyRules;
+use App\Controller\Rules\Company\CreateCompanyRules;
 use App\Controller\Rules\RuleValidator;
 use App\UseCase\Campaign\Create\CreateCampaign;
 use App\UseCase\Company\Create\CreateCompany;

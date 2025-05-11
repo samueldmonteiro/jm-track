@@ -19,7 +19,7 @@ class RuleValidator
                 $errorMessages[$error->getPropertyPath()] = $error->getMessage();
             }
 
-            return $errorMessages;
+            return ['errors' => $errorMessages];
         }
 
         return null;

@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Controller\Rules\Company;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class DeleteTrafficReturnRules
+{
+    #[Assert\NotBlank(message: "O companyId é obrigatório.")]
+    public string $companyId;
+
+    #[Assert\NotBlank(message: "O trafficReturnId é obrigatório.")]
+    public string $trafficReturnId;
+
+    public function __construct(array $data)
+    {
+        $this->companyId = $data['companyId'] ?? '';
+        $this->trafficReturnId = $data['trafficReturnId'] ?? '';
+    }
+}
