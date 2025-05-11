@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Domain\Exception;
+namespace App\Exception;
 
-use Exception;
-
-class CompanyIncorrectLoginException extends Exception
+class CompanyIncorrectLoginException extends \Exception
 {
-    public function __construct(string $message = 'Login Incorreto', int $code = 401)
-    {
+    public function __construct(
+        string $message = 'Login Incorreto',
+        int $code = 401
+    ) {
         parent::__construct($message, $code);
     }
 }

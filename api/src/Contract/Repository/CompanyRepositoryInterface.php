@@ -2,7 +2,7 @@
 
 namespace App\Contract\Repository;
 
-use App\Domain\Exception\CompanyNotFoundException;
+use App\Exception\CompanyNotFoundException;
 use App\Entity\Company;
 
 interface CompanyRepositoryInterface

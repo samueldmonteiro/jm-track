@@ -3,17 +3,28 @@ store:
     controller: App\Controller\CompanyController::store
     methods: [POST]
 
-create_campaign:
-    path: create/campaign
+campaign_create:
+    path: campaign/create
     controller: App\Controller\CompanyCampaignController::createCampaign
     methods: [POST]
 
-update_campaign:
-    path: update/campaign/{id}
+campaign_update:
+    path: campaign/update/{id}
     controller: App\Controller\CompanyCampaignController::updateCampaign
     methods: [PUT]
 
-delete_campaign:
-    path: delete/campaign/{id}
+campaign_delete:
+    path: campaign/delete/{id}
     controller: App\Controller\CompanyCampaignController::deleteCampaign
     methods: [DELETE]
+
+campaign_by_id:
+    path: campaign/{id}
+    controller: App\Controller\CompanyCampaignController::campaignById
+    methods: [GET]
+
+campaigns:
+    path: campaigns
+    controller: App\Controller\CompanyCampaignController::allCampaigns
+    methods: [GET]
+

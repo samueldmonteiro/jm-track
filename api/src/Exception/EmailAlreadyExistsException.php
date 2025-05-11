@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Domain\Exception;
+namespace App\Exception;
 
-use Exception;
-
-class EmailAlreadyExistsException extends Exception
+class EmailAlreadyExistsException extends \Exception
 {
-    public function __construct(string $message = 'Este e-mail já está cadastrado', int $code = 401)
-    {
+    public function __construct(
+        string $message = 'Este e-mail já está cadastrado',
+        int $code = 401
+    ) {
         parent::__construct($message, $code);
     }
 }

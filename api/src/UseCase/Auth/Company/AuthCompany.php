@@ -5,7 +5,7 @@ namespace App\UseCase\Auth\Company;
 use App\Contract\Repository\CompanyRepositoryInterface;
 use App\Contract\Service\AuthenticationTokenInterface;
 use App\Contract\Service\PasswordHasherInterface;
-use App\Domain\Exception\CompanyIncorrectLoginException;
+use App\Exception\CompanyIncorrectLoginException;
 
 class AuthCompany
 {
@@ -19,7 +19,7 @@ class AuthCompany
     {
         $company = $this->companyRepository->findByDocument($input->document);
 
-        if (!$company || !$this->passwordHasher->verify($company, $input->password)) {
+        if (!$this->passwordHasher->verify($company, $input->password)) {
             throw new CompanyIncorrectLoginException();
         }
 

@@ -3,12 +3,13 @@
 namespace App\Repository;
 
 use App\Contract\Repository\CampaignRepositoryInterface;
-use App\Domain\Exception\CampaignNotFoundException;
+use App\Exception\CampaignNotFoundException;
 use App\Entity\Campaign;
 use App\Entity\Company;
 use App\Exception\CampaignDoesNotBelongToCompanyException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 class CampaignRepository extends ServiceEntityRepository implements CampaignRepositoryInterface
@@ -31,13 +32,15 @@ class CampaignRepository extends ServiceEntityRepository implements CampaignRepo
 
     public function findByIdForCompany(Company $company, int $id, bool $throw = true): ?Campaign
     {
+        $parameters = new ArrayCollection([
+            new Parameter('id', $id),
+            new Parameter('company', $company),
+        ]);
+
         $campaign = $this->createQueryBuilder('c')
             ->andWhere('c.id = :id')
             ->andWhere('c.company = :company')
-            ->setParameters(new ArrayCollection([
-                'id' => $id,
-                'company' => $company,
-            ]))
+            ->setParameters($parameters)
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -46,6 +49,17 @@ class CampaignRepository extends ServiceEntityRepository implements CampaignRepo
         }
 
         return $campaign;
+    }
+
+    public function findAllForCompany(Company $company, bool $throw = true): array
+    {
+        $campaigns = $this->createQueryBuilder('c')
+            ->andWhere('c.company = :company')
+            ->setParameter('company', $company)
+            ->getQuery()
+            ->getResult();
+
+        return $campaigns;
     }
 
     public function campaignBelongsToCompany(Company $company, Campaign $campaign, bool $throw = true): bool
