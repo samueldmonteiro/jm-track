@@ -4,7 +4,7 @@ namespace App\Controller\Rules\Company;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateTrafficReturnRules
+class UpdateTrafficTransactionRules
 {
     #[Assert\NotBlank(message: "O Valor é obrigatório.")]
     public string $amount;
@@ -16,8 +16,8 @@ class CreateTrafficReturnRules
     #[Assert\NotBlank(message: "O companyId é obrigatório.")]
     public string $companyId;
 
-    #[Assert\NotBlank(message: "O campaignId é obrigatório.")]
-    public string $campaignId;
+    #[Assert\NotBlank(message: "O trafficTransactionId é obrigatório.")]
+    public string $trafficTransactionId;
 
     #[Assert\NotBlank(message: "O trafficSourceId é obrigatório.")]
     public string $trafficSourceId;
@@ -26,7 +26,7 @@ class CreateTrafficReturnRules
     {
         $this->companyId = $data['companyId'] ?? '';
         $this->trafficSourceId = $data['trafficSourceId'] ?? '';
-        $this->campaignId = $data['campaignId'] ?? '';
+        $this->trafficTransactionId = $data['trafficTransactionId'] ?? '';
         $this->date = $data['date'] ?? '';
         $this->amount = $data['amount'] ?? '';
     }

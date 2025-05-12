@@ -1,40 +1,41 @@
 <?php
 
-namespace App\UseCase\TrafficReturn\Create;
+namespace App\UseCase\TrafficTransaction\Create;
 
 use App\Contract\Repository\CampaignRepositoryInterface;
 use App\Contract\Repository\CompanyRepositoryInterface;
-use App\Contract\Repository\TrafficReturnRepositoryInterface;
+use App\Contract\Repository\TrafficTransactionRepositoryInterface;
 use App\Contract\Repository\TrafficSourceRepositoryInterface;
-use App\Entity\TrafficReturn;
+use App\Entity\TrafficTransaction;
 
-class CreateTrafficReturn
+class CreateTrafficTransaction
 {
     public function __construct(
-        private TrafficReturnRepositoryInterface $trafficReturnRepository,
+        private TrafficTransactionRepositoryInterface $trafficTransactionRepository,
         private TrafficSourceRepositoryInterface $trafficSourceRepository,
         private CompanyRepositoryInterface $companyRepository,
         private CampaignRepositoryInterface $campaignRepositoryInterface
     ) {}
 
-    public function execute(CreateTrafficReturnInput $input): CreateTrafficReturnOutput
+    public function execute(CreateTrafficTransactionInput $input): CreateTrafficTransactionOutput
     {
         $company = $this->companyRepository->findById($input->companyId);
         $campaign = $this->campaignRepositoryInterface->findById($input->campaignId);
         $trafficSource = $this->trafficSourceRepository->findById($input->trafficSourceId);
 
-        $trafficReturn = new TrafficReturn(
+        $trafficTransaction = new TrafficTransaction(
             $company,
             $campaign,
             $trafficSource,
             $input->amount,
-            $input->date
+            $input->date,
+            $input->type
         );
 
-        $trafficReturns = $this->trafficReturnRepository->create($trafficReturn);
+        $trafficTransactions = $this->trafficTransactionRepository->create($trafficTransaction);
 
-        return new CreateTrafficReturnOutput(
-            $trafficReturns
+        return new CreateTrafficTransactionOutput(
+            $trafficTransactions
         );
     }
 }

@@ -32,25 +32,25 @@ campaigns:
     methods: [GET]
 
 
-# Traffic Returns
+# Traffic Transactions
 
-traffic_return_create:
-    path: traffic_return/create
-    controller: App\Controller\CompanyTrafficReturnController::createTrafficReturn
+traffic_transaction_create:
+    path: traffic_transaction/create
+    controller: App\Controller\CompanyTrafficTransactionController::createTrafficTransaction
     methods: [POST]
 
-traffic_return_update:
-    path: traffic_return/update/{id}
-    controller: App\Controller\CompanyTrafficReturnController::updateTrafficReturn
+traffic_transaction_update:
+    path: traffic_transaction/update/{id}
+    controller: App\Controller\CompanyTrafficTransactionController::updateTrafficTransaction
     methods: [PUT]
 
-traffic_return_delete:
-    path: traffic_return/delete/{id}
-    controller: App\Controller\CompanyTrafficReturnController::deleteTrafficReturn
+traffic_transaction_delete:
+    path: traffic_transaction/delete/{id}
+    controller: App\Controller\CompanyTrafficTransactionController::deleteTrafficTransaction
     methods: [DELETE]
 
-traffic_returns:
-    path: traffic_returns
-    controller: App\Controller\CompanyTrafficReturnController::allTrafficReturns
+traffic_transactions:
+    path: traffic_transactions
+    controller: App\Controller\CompanyTrafficTransactionController::allTrafficTransactions
     methods: [GET]
 

@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\TrafficReturnRepository;
+use App\Entity\Enum\TrafficTransactionType;
+use App\Repository\TrafficTransactionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
-#[ORM\Entity(repositoryClass: TrafficReturnRepository::class)]
-#[ORM\Table(name: 'traffic_returns')]
-class TrafficReturn
+#[ORM\Entity(repositoryClass: TrafficTransactionRepository::class)]
+#[ORM\Table(name: 'traffic_transactions')]
+class TrafficTransaction
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,18 +38,24 @@ class TrafficReturn
     #[Groups(['tReturn', 'tSource'])]
     private ?string $amount = null;
 
+    #[ORM\Column(enumType: TrafficTransactionType::class)]
+    #[Groups(['tReturn', 'tSource'])]
+    private ?TrafficTransactionType $type = null;
+
     public function __construct(
         Company $company,
         Campaign $campaign,
         TrafficSource $trafficSource,
         string $amount,
-        \DateTimeImmutable $date
+        \DateTimeImmutable $date,
+        TrafficTransactionType $type
     ) {
         $this->setCompany($company);
         $this->setCampaign($campaign);
         $this->setTrafficSource($trafficSource);
         $this->setAmount($amount);
         $this->setDate($date);
+        $this->setType($type);
     }
 
     public function getId(): ?int
@@ -112,6 +119,18 @@ class TrafficReturn
     public function setAmount(string $amount): static
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getType(): ?TrafficTransactionType
+    {
+        return $this->type;
+    }
+
+    public function setType(TrafficTransactionType $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

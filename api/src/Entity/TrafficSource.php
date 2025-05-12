@@ -29,10 +29,10 @@ class TrafficSource
     private ?string $image = null;
 
     /**
-     * @var Collection<int, TrafficReturn>
+     * @var Collection<int, TrafficTransaction>
      */
-    #[ORM\OneToMany(targetEntity: TrafficReturn::class, mappedBy: 'trafficSource')]
-    private Collection $trafficReturns;
+    #[ORM\OneToMany(targetEntity: TrafficTransaction::class, mappedBy: 'trafficSource')]
+    private Collection $trafficTransactions;
 
     public function __construct(
         string $name,
@@ -40,7 +40,7 @@ class TrafficSource
     ) {
         $this->setName($name);
         $this->setImage($image);
-        $this->trafficReturns = new ArrayCollection();
+        $this->trafficTransactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -73,29 +73,29 @@ class TrafficSource
     }
 
     /**
-     * @return Collection<int, TrafficReturn>
+     * @return Collection<int, TrafficTransaction>
      */
-    public function getTrafficReturns(): Collection
+    public function getTrafficTransactions(): Collection
     {
-        return $this->trafficReturns;
+        return $this->trafficTransactions;
     }
 
-    public function addTrafficReturn(TrafficReturn $trafficReturn): static
+    public function addTrafficTransaction(TrafficTransaction $trafficTransaction): static
     {
-        if (!$this->trafficReturns->contains($trafficReturn)) {
-            $this->trafficReturns->add($trafficReturn);
-            $trafficReturn->setTrafficSource($this);
+        if (!$this->trafficTransactions->contains($trafficTransaction)) {
+            $this->trafficTransactions->add($trafficTransaction);
+            $trafficTransaction->setTrafficSource($this);
         }
 
         return $this;
     }
 
-    public function removeTrafficReturn(TrafficReturn $trafficReturn): static
+    public function removeTrafficTransaction(TrafficTransaction $trafficTransaction): static
     {
-        if ($this->trafficReturns->removeElement($trafficReturn)) {
+        if ($this->trafficTransactions->removeElement($trafficTransaction)) {
             // set the owning side to null (unless already changed)
-            if ($trafficReturn->getTrafficSource() === $this) {
-                $trafficReturn->setTrafficSource(null);
+            if ($trafficTransaction->getTrafficSource() === $this) {
+                $trafficTransaction->setTrafficSource(null);
             }
         }
 

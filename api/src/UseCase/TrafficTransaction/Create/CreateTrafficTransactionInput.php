@@ -1,10 +1,11 @@
 <?php
 
-namespace App\UseCase\TrafficReturn\Create;
+namespace App\UseCase\TrafficTransaction\Create;
 
+use App\Entity\Enum\TrafficTransactionType;
 use DateTimeImmutable;
 
-class CreateTrafficReturnInput
+class CreateTrafficTransactionInput
 {
     public function __construct(
         public int $companyId,
@@ -12,5 +13,6 @@ class CreateTrafficReturnInput
         public int $trafficSourceId,
         public string $amount,
         public DateTimeImmutable $date,
+        public TrafficTransactionType $type,
     ) {}
 }

@@ -68,10 +68,10 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $campaigns;
 
     /**
-     * @var Collection<int, TrafficReturn>
+     * @var Collection<int, TrafficTransaction>
      */
-    #[ORM\OneToMany(targetEntity: TrafficReturn::class, mappedBy: 'company')]
-    private Collection $trafficReturns;
+    #[ORM\OneToMany(targetEntity: TrafficTransaction::class, mappedBy: 'company')]
+    private Collection $trafficTransactions;
 
     public function __construct(
         string $name,
@@ -88,7 +88,7 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
         $this->setPhone($phone);
         $this->setCreatedAt($createdAt);
         $this->campaigns = new ArrayCollection();
-        $this->trafficReturns = new ArrayCollection();
+        $this->trafficTransactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -255,33 +255,31 @@ class Company implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, TrafficReturn>
+     * @return Collection<int, TrafficTransaction>
      */
-    public function getTrafficReturns(): Collection
+    public function getTrafficTransactions(): Collection
     {
-        return $this->trafficReturns;
+        return $this->trafficTransactions;
     }
 
-    public function addTrafficReturn(TrafficReturn $trafficReturn): static
+    public function addTrafficTransaction(TrafficTransaction $trafficTransaction): static
     {
-        if (!$this->trafficReturns->contains($trafficReturn)) {
-            $this->trafficReturns->add($trafficReturn);
-            $trafficReturn->setCompany($this);
+        if (!$this->trafficTransactions->contains($trafficTransaction)) {
+            $this->trafficTransactions->add($trafficTransaction);
+            $trafficTransaction->setCompany($this);
         }
 
         return $this;
     }
 
-    public function removeTrafficReturn(TrafficReturn $trafficReturn): static
+    public function removeTrafficTransaction(TrafficTransaction $trafficTransaction): static
     {
-        if ($this->trafficReturns->removeElement($trafficReturn)) {
-            // set the owning side to null (unless already changed)
-            if ($trafficReturn->getCompany() === $this) {
-                $trafficReturn->setCompany(null);
+        if ($this->trafficTransactions->removeElement($trafficTransaction)) {
+            if ($trafficTransaction->getCompany() === $this) {
+                $trafficTransaction->setCompany(null);
             }
         }
 
         return $this;
     }
-
 }
