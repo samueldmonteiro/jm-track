@@ -26,6 +26,11 @@ campaign_by_id:
     controller: App\Controller\CompanyCampaignController::campaignById
     methods: [GET]
 
+campaign_by_id_with_transactions:
+    path: campaign/{id}/transactions
+    controller: App\Controller\CompanyCampaignController::campaignByIdWithTransactions
+    methods: [GET]
+
 campaigns:
     path: campaigns
     controller: App\Controller\CompanyCampaignController::allCampaigns
@@ -53,4 +58,3 @@ traffic_transactions:
     path: traffic_transactions
     controller: App\Controller\CompanyTrafficTransactionController::allTrafficTransactions
     methods: [GET]
-

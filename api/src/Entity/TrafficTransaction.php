@@ -15,31 +15,31 @@ class TrafficTransaction
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['tReturn', 'tSource'])]
+    #[Groups(['tTransaction:read'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'trafficReturns')]
+    #[ORM\ManyToOne(inversedBy: 'trafficTransactions')]
     #[Groups(['company'])]
     private ?Company $company = null;
 
-    #[ORM\ManyToOne(inversedBy: 'trafficReturns')]
+    #[ORM\ManyToOne(inversedBy: 'trafficTransactions')]
     #[Groups(['campaign'])]
     private ?Campaign $campaign = null;
 
-    #[ORM\ManyToOne(inversedBy: 'trafficReturns')]
-    #[Groups(['tSource'])]
+    #[ORM\ManyToOne(inversedBy: 'trafficTransactions')]
+    #[Groups(['tSource:read'])]
     private ?TrafficSource $trafficSource = null;
 
     #[ORM\Column]
-    #[Groups(['tReturn', 'tSource'])]
+    #[Groups(['tTransaction:read'])]
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Groups(['tReturn', 'tSource'])]
+    #[Groups(['tTransaction:read'])]
     private ?string $amount = null;
 
     #[ORM\Column(enumType: TrafficTransactionType::class)]
-    #[Groups(['tReturn', 'tSource'])]
+    #[Groups(['tTransaction:read'])]
     private ?TrafficTransactionType $type = null;
 
     public function __construct(

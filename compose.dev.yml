@@ -1,0 +1,77 @@
+services:
+  api:
+    container_name: api
+
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        UID: ${UID}
+        USER: ${USER}
+
+    volumes:
+      - ./api:/var/www/html
+
+    depends_on:
+      - db
+      - redis
+    networks:
+      - jm_track
+
+    command: |
+      bash -c "[ ! -d 'vendor' ] && composer install && symfony serve --listen-ip=0.0.0.0 --port=8180 || symfony serve --listen-ip=0.0.0.0 --port=8180"
+
+    ports:
+      - "127.0.0.1:8180:8180"
+
+  frontend:
+    container_name: frontend
+
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        UID: ${UID}
+        GID: ${GID}
+
+    volumes:
+      - ./frontend:/app
+
+    command: |
+     bash -c "[ ! -d 'node_modules' ] && npm install && npm run dev -- --host 0.0.0.0 --port 5173 || npm run dev -- --host 0.0.0.0 --port 5173"
+
+
+    networks:
+      - jm_track
+
+    ports:
+      - "127.0.0.1:5173:5173"
+
+  db:
+    container_name: db
+    image: mysql:8.0.30
+    restart: unless-stopped
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+
+    networks:
+      - jm_track
+
+    ports:
+      - "127.0.0.1:3306:3306"
+
+networks:
+  jm_track:
+    driver: bridge
+
+volumes:
+  db_data:
+  db_tests_data:
+  redis_data:

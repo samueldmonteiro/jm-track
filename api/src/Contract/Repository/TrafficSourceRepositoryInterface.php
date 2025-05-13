@@ -11,4 +11,6 @@ interface TrafficSourceRepositoryInterface
      * @throws TrafficSourceNotFoundException
      */
     public function findById(int $id, bool $throw = true): ?TrafficSource;
+    public function findAll(): array;
+
 }

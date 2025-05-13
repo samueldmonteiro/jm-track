@@ -17,15 +17,15 @@ class TrafficSource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['tSource'])]
+    #[Groups(['tSource:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['tSource'])]
+    #[Groups(['tSource:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['tSource'])]
+    #[Groups(['tSource:read'])]
     private ?string $image = null;
 
     /**
@@ -62,7 +62,7 @@ class TrafficSource
 
     public function getImage(): ?string
     {
-        return $this->image;
+        return $_ENV['URL_BASE'] .  $this->image;
     }
 
     public function setImage(string $image): static

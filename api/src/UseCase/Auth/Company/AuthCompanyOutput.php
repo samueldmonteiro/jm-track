@@ -10,14 +10,14 @@ class AuthCompanyOutput
 
     public function __construct(
         public string $token,
-        public Company $company
+        public Company $user
     ) {}
 
     public function toArray(): array
     {
         return [
             'token' => $this->token,
-            'company' => $this->company,
+            'user' => $this->user,
             'userType' => $this->userType,
         ];
     }

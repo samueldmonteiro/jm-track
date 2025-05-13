@@ -28,7 +28,7 @@ final class AuthController extends BaseController
             fn($rules) => $this->authCompany->execute(
                 new AuthCompanyInput($rules->document, $rules->password)
             ),
-            context: ['groups' => ['company_read']],
+            context: ['groups' => ['company']],
             formatResponse: fn($result) => $result->toArray()
         );
     }
@@ -37,7 +37,7 @@ final class AuthController extends BaseController
     {
         try {
             $response = $this->getUser->execute();
-            return $this->json($response);
+            return $this->jsonSuccess($response->toArray(), context: ['groups'=> ['company']]);
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), $e->getCode());
         }

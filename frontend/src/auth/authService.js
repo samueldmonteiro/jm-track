@@ -16,7 +16,7 @@ export const verifyToken = async () => {
 
 export const getUser = async () => {
     try {
-        const response = await api.post('auth/user')
+        const response = await api.post('auth/get')
         return response.data
     } catch (error) {
         return false

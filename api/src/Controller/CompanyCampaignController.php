@@ -45,7 +45,7 @@ final class CompanyCampaignController extends BaseController
                     $rules->companyId
                 )
             ),
-            context: ['json', 'groups' => ['campaign_read']],
+            context: ['json', 'groups' => ['campaign:read']],
             formatResponse: fn($result) => ['campaign' => $result->campaign]
         );
     }
@@ -69,7 +69,7 @@ final class CompanyCampaignController extends BaseController
                     $rules->name,
                 )
             ),
-            context: ['json', 'groups' => ['campaign_read']],
+            context: ['json', 'groups' => ['campaign:read']],
             formatResponse: fn($result) => ['campaign' => $result->campaign]
         );
     }
@@ -115,10 +115,34 @@ final class CompanyCampaignController extends BaseController
                     $rules->campaignId,
                 )
             ),
-            context: ['json', 'groups' => ['campaign_read']],
+            context: ['json', 'groups' => ['campaign:read']],
             formatResponse: fn($result) => $result->toArray()
         );
     }
+
+    public function campaignByIdWithTransactions(Request $request, RuleValidator $validator): JsonResponse
+    {
+        $data = [
+            'companyId' => $this->getCompanyId(),
+            'campaignId' => $request->attributes->get('id'),
+        ];
+
+        $rules = new CampaignByIdRules($data);
+
+        return $this->handleRequest(
+            $validator,
+            $rules,
+            fn($rules) => $this->findCampaignByIdForCompany->execute(
+                new FindCampaignByIdForCompanyInput(
+                    $rules->companyId,
+                    $rules->campaignId,
+                )
+            ),
+            context: ['json', 'groups' => ['campaign:read', 'tTransaction:read', 'tSource:read']],
+            formatResponse: fn($result) => $result->toArray()
+        );
+    }
+
 
     public function allCampaigns(): JsonResponse
     {
@@ -128,9 +152,9 @@ final class CompanyCampaignController extends BaseController
             new FindAllCampaignsForCompanyInput($companyId)
         );
 
-        return $this->json(
+        return $this->jsonSuccess(
             $campaigns->toArray(),
-            context: ['json', 'groups' => ['campaign_read']],
+            context: ['json', 'groups' => ['campaign:read', 'tTransaction:read', 'tSource:read']],
         );
     }
 

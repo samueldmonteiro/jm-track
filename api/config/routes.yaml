@@ -7,3 +7,8 @@ company:
     resource: routes/api/company.yaml
     prefix: api/v1/company
     name_prefix: company_
+
+traffic_source:
+    resource: routes/api/traffic_source.yaml
+    prefix: api/v1/traffic_source
+    name_prefix: traffic_source_

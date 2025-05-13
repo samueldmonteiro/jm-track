@@ -3,9 +3,9 @@ import formatToBRL from '../../../utils/formatToBRL';
 import { Link } from 'react-router-dom';
 
 const statusMap = {
-  open: <div className="text-center text-green-500">ABERTA</div>,
-  closed: <div className="text-center text-red-500">FECHADA</div>,
-  paused: <div className="text-center text-orange-500">PAUSADA</div>
+  aberto: <div className="text-center text-green-500">ABERTA</div>,
+  fechado: <div className="text-center text-red-500">FECHADA</div>,
+  pausado: <div className="text-center text-orange-500">PAUSADA</div>
 };
 
 const CampaignsTable = ({ campaigns = [] }) => {
@@ -30,6 +30,25 @@ const CampaignsTable = ({ campaigns = [] }) => {
     setFilterValues(prev => ({ ...prev, [name]: value }));
   };
 
+  // Função para calcular gastos (transações do tipo "expense")
+  const calculateSpent = (transactions) => {
+    return transactions
+      ?.filter(t => t.type === 'expense')
+      ?.reduce((acc, curr) => acc + parseFloat(curr.amount), 0) || 0;
+  };
+
+  // Função para calcular retornos (transações do tipo "return")
+  const calculateReturns = (transactions) => {
+    return transactions
+      ?.filter(t => t.type === 'return')
+      ?.reduce((acc, curr) => acc + parseFloat(curr.amount), 0) || 0;
+  };
+
+  // Função para calcular lucro líquido (retornos - gastos)
+  const calculateProfit = (transactions) => {
+    return calculateReturns(transactions) - calculateSpent(transactions);
+  };
+
   const filteredAndSortedCampaigns = useMemo(() => {
     let filtered = [...campaigns];
 
@@ -40,15 +59,17 @@ const CampaignsTable = ({ campaigns = [] }) => {
     }
 
     if (filterValues.status) {
-      filtered = filtered.filter(c => c.status === filterValues.status);
+      filtered = filtered.filter(c => c.status.toLowerCase() === filterValues.status.toLowerCase());
     }
 
     if (filterValues.minProfit) {
-      filtered = filtered.filter(c => c.profit >= Number(filterValues.minProfit));
+      filtered = filtered.filter(c => 
+        calculateProfit(c.trafficTransactions) >= Number(filterValues.minProfit));
     }
 
     if (filterValues.maxProfit) {
-      filtered = filtered.filter(c => c.profit <= Number(filterValues.maxProfit));
+      filtered = filtered.filter(c => 
+        calculateProfit(c.trafficTransactions) <= Number(filterValues.maxProfit));
     }
 
     // Apply sorting
@@ -57,12 +78,16 @@ const CampaignsTable = ({ campaigns = [] }) => {
         let valueA, valueB;
 
         if (sortConfig.key === 'spent') {
-          valueA = a.trafficExpenses?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
-          valueB = b.trafficExpenses?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
+          valueA = calculateSpent(a.trafficTransactions);
+          valueB = calculateSpent(b.trafficTransactions);
         } else if (sortConfig.key === 'returns') {
-          valueA = a.trafficReturns?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
-          valueB = b.trafficReturns?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
+          valueA = calculateReturns(a.trafficTransactions);
+          valueB = calculateReturns(b.trafficTransactions);
+        } else if (sortConfig.key === 'profit') {
+          valueA = calculateProfit(a.trafficTransactions);
+          valueB = calculateProfit(b.trafficTransactions);
         } else if (sortConfig.key === 'reaches') {
+          // Como não temos dados de reaches nos dados fornecidos, mantemos como estava
           valueA = a.campaignMetrics?.reduce((acc, curr) => acc + curr.returningCustomers, 0) || 0;
           valueB = b.campaignMetrics?.reduce((acc, curr) => acc + curr.returningCustomers, 0) || 0;
         } else {
@@ -118,9 +143,9 @@ const CampaignsTable = ({ campaigns = [] }) => {
             onChange={handleFilterChange}
           >
             <option value="">Todos</option>
-            <option value="open">Aberta</option>
-            <option value="closed">Fechada</option>
-            <option value="paused">Pausada</option>
+            <option value="aberto">Aberta</option>
+            <option value="fechado">Fechada</option>
+            <option value="pausado">Pausada</option>
           </select>
         </div>
         <div>
@@ -187,14 +212,6 @@ const CampaignsTable = ({ campaigns = [] }) => {
                 <th className="p-2">
                   <div
                     className="font-semibold text-center cursor-pointer flex items-center justify-center"
-                    onClick={() => handleSort('reaches')}
-                  >
-                    QT. ALCANCES {getSortIndicator('reaches')}
-                  </div>
-                </th>
-                <th className="p-2">
-                  <div
-                    className="font-semibold text-center cursor-pointer flex items-center justify-center"
                     onClick={() => handleSort('status')}
                   >
                     STATUS {getSortIndicator('status')}
@@ -203,40 +220,41 @@ const CampaignsTable = ({ campaigns = [] }) => {
               </tr>
             </thead>
             <tbody className="text-sm font-medium divide-y divide-gray-100 dark:divide-gray-700/60">
-              {filteredAndSortedCampaigns.map(c => (
-                <tr key={c.id} className="cursor-pointer transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <td className="p-2">
-                    <Link to={`${c.id}`} className="flex items-center text-gray-800 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400">
-                      {c.name}
-                    </Link>
-                  </td>
-                  <td className="p-2">
-                    <Link to={`${c.id}`} className="block text-center text-red-500 hover:text-red-600 dark:hover:text-red-400">
-                      {formatToBRL(c?.trafficExpenses?.reduce((acc, curr) => acc + curr.amount, 0) || 0)}
-                    </Link>
-                  </td>
-                  <td className="p-2">
-                    <Link to={`${c.id}`} className="block text-center text-green-500 hover:text-green-600 dark:hover:text-green-400">
-                      {formatToBRL(c?.trafficReturns?.reduce((acc, curr) => acc + curr.amount, 0) || 0)}
-                    </Link>
-                  </td>
-                  <td className="p-2">
-                    <Link to={`${c.id}`} className="block text-center hover:text-blue-500 dark:hover:text-blue-400">
-                      {formatToBRL(c.profit || 0)}
-                    </Link>
-                  </td>
-                  <td className="p-2">
-                    <Link to={`${c.id}`} className="block text-center hover:text-blue-500 dark:hover:text-blue-400">
-                      {c?.campaignMetrics?.reduce((acc, curr) => acc + curr.returningCustomers, 0) || 0}
-                    </Link>
-                  </td>
-                  <td className="p-2">
-                    <Link to={`${c.id}`} className="block text-center">
-                      {statusMap[c.status] || 'Status Unknown'}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+              {filteredAndSortedCampaigns.map(c => {
+                const spent = calculateSpent(c.trafficTransactions);
+                const returns = calculateReturns(c.trafficTransactions);
+                const profit = calculateProfit(c.trafficTransactions);
+                
+                return (
+                  <tr key={c.id} className="cursor-pointer transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <td className="p-2">
+                      <Link to={`${c.id}`} className="flex items-center text-gray-800 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400">
+                        {c.name}
+                      </Link>
+                    </td>
+                    <td className="p-2">
+                      <Link to={`${c.id}`} className="block text-center text-red-500 hover:text-red-600 dark:hover:text-red-400">
+                        {formatToBRL(spent)}
+                      </Link>
+                    </td>
+                    <td className="p-2">
+                      <Link to={`${c.id}`} className="block text-center text-green-500 hover:text-green-600 dark:hover:text-green-400">
+                        {formatToBRL(returns)}
+                      </Link>
+                    </td>
+                    <td className="p-2">
+                      <Link to={`${c.id}`} className="block text-center hover:text-blue-500 dark:hover:text-blue-400">
+                        {formatToBRL(profit)}
+                      </Link>
+                    </td>
+                    <td className="p-2">
+                      <Link to={`${c.id}`} className="block text-center">
+                        {statusMap[c.status] || 'Status Unknown'}
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

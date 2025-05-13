@@ -1,0 +1,5 @@
+all:
+    path: /
+    controller: App\Controller\TrafficSourceController::findAll
+    methods: [GET]
+

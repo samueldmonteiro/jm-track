@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
           resetAuth()
         } else {
           setUser(userData.data.user)
-          setUserType(userData.data.type)
+          setUserType(userData.data.userType)
         }
       } catch (error) {
         console.error("Erro ao autenticar:", error)
@@ -52,13 +52,16 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   const login = async (loginData) => {
+    console.log("LOIGINN", loginData)
     localStorage.setItem('token', loginData.token)
 
     try {
       const userData = await getUser()
+      console.log("TEST", userData);
+
       setUser(userData.data.user)
       localStorage.setItem('companyId', userData.data.user.id)
-      setUserType(userData.data.type)
+      setUserType(userData.data.userType)
     } catch (error) {
       console.error("Erro no login:", error)
     }

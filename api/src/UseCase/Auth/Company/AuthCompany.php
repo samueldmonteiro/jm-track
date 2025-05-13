@@ -17,7 +17,9 @@ class AuthCompany
 
     public function execute(AuthCompanyInput $input): AuthCompanyOutput
     {
-        $company = $this->companyRepository->findByDocument($input->document);
+        if (! $company = $this->companyRepository->findByDocument($input->document, false)) {
+            throw new CompanyIncorrectLoginException();
+        }
 
         if (!$this->passwordHasher->verify($company, $input->password)) {
             throw new CompanyIncorrectLoginException();

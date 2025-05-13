@@ -37,12 +37,11 @@ export default function MenuNewCampaign({ open, setOpen }) {
 
   useEffect(() => {
     if (data) {
-      findById(data.data.id).then(resp => {
+      findById(data.data.campaign.id).then(resp => {
         toggleNewCampaignCreated(true);
       })
     }
   }, [data]);
-
 
   return (
     <div>

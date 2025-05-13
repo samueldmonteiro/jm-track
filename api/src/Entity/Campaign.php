@@ -17,32 +17,33 @@ class Campaign
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['campaign'])]
+    #[Groups(['campaign:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'campaigns')]
     private ?Company $company = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['campaign'])]
+    #[Groups(['campaign:read'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['campaign'])]
+    #[Groups(['campaign:read'])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['campaign'])]
+    #[Groups(['campaign:read'])]
     private ?\DateTimeImmutable $endDate = null;
 
     #[ORM\Column(enumType: CampaignStatus::class)]
-    #[Groups(['campaign'])]
+    #[Groups(['campaign:read'])]
     private ?CampaignStatus $status = null;
 
     /**
      * @var Collection<int, TrafficTransaction>
      */
     #[ORM\OneToMany(targetEntity: TrafficTransaction::class, mappedBy: 'campaign')]
+    #[Groups(['tTransaction:read'])]
     private Collection $trafficTransactions;
 
     public function __construct(

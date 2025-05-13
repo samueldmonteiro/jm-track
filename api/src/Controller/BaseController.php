@@ -22,6 +22,27 @@ class BaseController extends AbstractController
         );
     }
 
+    protected function jsonSuccess(
+        mixed $data,
+        int $statusCode = 200,
+        string $message = '',
+        string $type = 'success',
+        array $headers = [],
+        array $context = []
+    ) {
+        return $this->json(
+            [
+                'data' => $data,
+                'message' => $message,
+                'type' => $type,
+                'code' => $statusCode
+            ],
+            $statusCode ? $statusCode : 500,
+            $headers,
+            $context
+        );
+    }
+
     protected function handleRequest(
         RuleValidator $validator,
         object $rules,
@@ -39,7 +60,7 @@ class BaseController extends AbstractController
             $result = $useCaseCallback($rules);
             $response = $formatResponse ? $formatResponse($result) : $result;
 
-            return $this->json($response, context: $context);
+            return $this->jsonSuccess($response, context: $context);
         } catch (\Exception $e) {
             return $this->jsonError($e->getMessage(), $e->getCode());
         }

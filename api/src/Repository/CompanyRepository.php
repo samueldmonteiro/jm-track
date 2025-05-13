@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Contract\Repository\CompanyRepositoryInterface;
-use App\Domain\Exception\CompanyNotFoundException;
+use App\Exception\CompanyNotFoundException;
 use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

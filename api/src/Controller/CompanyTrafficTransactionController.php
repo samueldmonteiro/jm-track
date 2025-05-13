@@ -19,6 +19,7 @@ use App\UseCase\TrafficTransaction\FindAllForCompany\FindAllTrafficTransactionsF
 use App\UseCase\TrafficTransaction\Update\UpdateTrafficTransaction;
 use App\UseCase\TrafficTransaction\Update\UpdateTrafficTransactionInput;
 use DateTimeImmutable;
+use TypeError;
 
 final class CompanyTrafficTransactionController extends BaseController
 {
@@ -34,6 +35,10 @@ final class CompanyTrafficTransactionController extends BaseController
         $data = array_merge(['companyId' => $this->getCompanyId()], $request->toArray());
         $rules = new CreateTrafficTransactionRules($data);
 
+        if (!$type = TrafficTransactionType::tryFrom($rules->type)) {
+            return $this->jsonError(data: ['errors' => ['type' => 'Tipo de transação inválida']]);
+        }
+        
         return $this->handleRequest(
             $validator,
             $rules,
@@ -44,7 +49,7 @@ final class CompanyTrafficTransactionController extends BaseController
                     $rules->trafficSourceId,
                     $rules->amount,
                     new DateTimeImmutable($rules->date),
-                    TrafficTransactionType::tryFrom($rules->type)
+                    $type
                 )
             ),
             context: ['json', 'groups' => ['tRead', 'tSource']],

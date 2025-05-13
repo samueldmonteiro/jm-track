@@ -15,14 +15,14 @@ const Campaigns = () => {
 
   useEffect(() => {
     getAllCampaigns().then(resp => {
-      setCampaigns(resp.data.data);
+      setCampaigns(resp.data.data.campaigns);
     })
   }, []);
 
   useEffect(() => {
     if (newCampaignCreated) {
       getAllCampaigns().then(resp => {
-        setCampaigns(resp.data.data);
+        setCampaigns(resp.data.data.campaigns);
       })
     }
   }, [newCampaignCreated]);
